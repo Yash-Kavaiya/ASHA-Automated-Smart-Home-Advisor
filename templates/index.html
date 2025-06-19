@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASHA - AI Real Estate Voice Assistant | Your Dream Home Awaits</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="ASHA - India's first AI-powered real estate voice assistant. Find properties, schedule visits, and get personalized recommendations through natural voice conversations.">
+    <meta name="keywords" content="real estate, AI assistant, voice search, property finder, home search, India">
+    <meta name="author" content="ASHA Real Estate Team">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="ASHA - AI Real Estate Voice Assistant">
+    <meta property="og:description" content="Your Trusted Voice in Finding Your Dream Home">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://asha-ai.com">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'asha-blue': '#1E40AF',
+                        'asha-green': '#059669',
+                        'asha-orange': '#EA580C',
+                        'asha-purple': '#7C3AED',
+                        'property-gold': '#F59E0B',
+                        'success-green': '#10B981',
+                        'error-red': '#EF4444'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/asha-styles.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #1E40AF 0%, #059669 50%, #EA580C 100%);
+        }
+        
+        .property-card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .property-card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .voice-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+        
+        .typing-indicator::after {
+            content: '...';
+            animation: typing 1.5s infinite;
+        }
+        
+        @keyframes typing {
+            0%, 100% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+        
+        .chat-container {
+            max-height: 500px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        
+        .appointment-form {
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+        }
+        
+        /* Property search form styles */
+        .search-form {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        /* Custom scrollbar */
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #1E40AF;
+            border-radius: 10px;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: #1D4ED8;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            #asha-chat-window {
+                width: 95vw !important;
+                height: 85vh !important;
+                right: 2.5vw !important;
+                bottom: 2.5vh !important;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            #asha-chat-window {
+                width: 100vw !important;
+                height: 100vh !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                border-radius: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen font-inter">
+    <!-- Header -->
+    <header class="bg-white shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-asha-blue rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-home text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">ASHA</h1>
+                        <p class="text-sm text-gray-600">AI Real Estate Assistant</p>
+                    </div>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-asha-blue font-medium transition-colors">Home</a>
+                    <a href="#properties" class="text-gray-700 hover:text-asha-blue font-medium transition-colors">Properties</a>
+                    <a href="#services" class="text-gray-700 hover:text-asha-blue font-medium transition-colors">Services</a>
+                    <a href="#about" class="text-gray-700 hover:text-asha-blue font-medium transition-colors">About</a>
+                    <a href="#contact" class="text-gray-700 hover:text-asha-blue font-medium transition-colors">Contact</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="bg-asha-blue text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-phone mr-2"></i>
+                        (323) 991-0225
+                    </button>
+                    <button class="md:hidden text-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-gradient text-white py-20">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-12 lg:mb-0">
+                    <h1 class="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                        Your Trusted Voice in Finding Your 
+                        <span class="text-property-gold">Dream Home</span>
+                    </h1>
+                    <p class="text-xl mb-8 opacity-90">
+                        ASHA is India's first AI-powered real estate voice assistant. 
+                        Search properties, schedule visits, and get personalized recommendations 
+                        through natural conversations.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button id="start-voice-search" class="bg-white text-asha-blue px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center">
+                            <i class="fas fa-microphone mr-3 text-xl"></i>
+                            Start Voice Search
+                        </button>
+                        <button id="browse-properties" class="bg-transparent border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-asha-blue transition-colors">
+                            Browse Properties
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2 flex justify-center">
+                    <div class="relative">
+                        <div class="w-80 h-80 bg-white rounded-full shadow-2xl flex items-center justify-center">
+                            <div class="w-64 h-64 bg-gradient-to-br from-asha-blue to-asha-green rounded-full flex items-center justify-center">
+                                <i class="fas fa-home text-white text-6xl"></i>
+                            </div>
+                        </div>
+                        <div class="absolute -top-4 -right-4 w-16 h-16 bg-property-gold rounded-full flex items-center justify-center">
+                            <i class="fas fa-microphone text-white text-2xl voice-pulse"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Property Search -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+                    Find Your Perfect Property
+                </h2>
+                
+                <div class="search-form rounded-2xl shadow-xl p-8">
+                    <form id="property-search-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Property Type</label>
+                            <select id="property-type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue focus:border-transparent">
+                                <option value="">Select Type</option>
+                                <option value="apartment">Apartment</option>
+                                <option value="villa">Villa</option>
+                                <option value="house">House</option>
+                                <option value="commercial_space">Commercial Space</option>
+                                <option value="plot">Plot</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Location</label>
+                            <input type="text" id="location" placeholder="Enter city or area" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Budget Range</label>
+                            <select id="budget" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue focus:border-transparent">
+                                <option value="">Select Budget</option>
+                                <option value="0-2500000">Under ₹25 Lakhs</option>
+                                <option value="2500000-5000000">₹25L - ₹50L</option>
+                                <option value="5000000-10000000">₹50L - ₹1Cr</option>
+                                <option value="10000000-20000000">₹1Cr - ₹2Cr</option>
+                                <option value="20000000-50000000">₹2Cr - ₹5Cr</option>
+                                <option value="50000000-999999999">Above ₹5Cr</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Bedrooms</label>
+                            <select id="bedrooms" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue focus:border-transparent">
+                                <option value="">Any</option>
+                                <option value="1">1 BHK</option>
+                                <option value="2">2 BHK</option>
+                                <option value="3">3 BHK</option>
+                                <option value="4">4 BHK</option>
+                                <option value="5">5+ BHK</option>
+                            </select>
+                        </div>
+                        
+                        <div class="lg:col-span-4 flex justify-center">
+                            <button type="submit" class="bg-asha-blue text-white px-12 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center">
+                                <i class="fas fa-search mr-3"></i>
+                                Search Properties
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Results Section -->
+    <section id="property-results" class="py-16 bg-gray-50 hidden">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+                Property Search Results
+            </h2>
+            <div id="properties-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Property cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+                How ASHA Helps You
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-asha-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Property Search</h3>
+                    <p class="text-gray-600">Find properties using natural voice commands or detailed filters</p>
+                </div>
+                
+                <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-asha-green rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-calendar-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Schedule Visits</h3>
+                    <p class="text-gray-600">Book property visits and manage appointments effortlessly</p>
+                </div>
+                
+                <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-asha-orange rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-brain text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Smart Recommendations</h3>
+                    <p class="text-gray-600">Get AI-powered property suggestions based on your preferences</p>
+                </div>
+                
+                <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-asha-purple rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-headset text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">24/7 Support</h3>
+                    <p class="text-gray-600">Get instant answers and support anytime you need help</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">
+                    About ASHA
+                </h2>
+                <p class="text-xl text-gray-600 mb-8">
+                    ASHA (Automated Smart Home Advisor) is India's first AI-powered real estate voice assistant. 
+                    We're revolutionizing how people search for properties by making it as simple as having a conversation.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-asha-blue mb-2">10,000+</div>
+                        <div class="text-gray-600">Properties Listed</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-asha-green mb-2">5,000+</div>
+                        <div class="text-gray-600">Happy Customers</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-asha-orange mb-2">50+</div>
+                        <div class="text-gray-600">Cities Covered</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+                Get in Touch
+            </h2>
+            
+            <div class="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-semibold mb-6">Contact Information</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-asha-blue rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-phone text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Phone</h4>
+                                <p class="text-gray-600">(323) 991-0225</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-asha-green rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-envelope text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Email</h4>
+                                <p class="text-gray-600">support@asha-ai.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-asha-orange rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas fa-map-marker-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Address</h4>
+                                <p class="text-gray-600">Mumbai, Maharashtra, India</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-semibold mb-6">Send us a Message</h3>
+                    <form id="contact-form" class="space-y-4">
+                        <div>
+                            <input type="text" placeholder="Your Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue focus:border-transparent">
+                        </div>
+                        <div>
+                            <input type="email" placeholder="Your Email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue focus:border-transparent">
+                        </div>
+                        <div>
+                            <textarea rows="4" placeholder="Your Message" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue focus:border-transparent"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-asha-blue text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-asha-blue rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-home text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">ASHA</h3>
+                            <p class="text-sm text-gray-400">AI Real Estate Assistant</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">
+                        Your trusted voice in finding your dream home through AI-powered conversations.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Services</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Property Search</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Appointment Booking</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Voice Assistant</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Market Analysis</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#home" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="#properties" class="hover:text-white transition-colors">Properties</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors">Services</a></li>
+                        <li><a href="#about" class="hover:text-white transition-colors">About</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact</h3>
+                    <div class="space-y-2 text-gray-400">
+                        <p><i class="fas fa-phone mr-2"></i>(323) 991-0225</p>
+                        <p><i class="fas fa-envelope mr-2"></i>support@asha-ai.com</p>
+                        <p><i class="fas fa-map-marker-alt mr-2"></i>Mumbai, India</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-400">
+                    &copy; 2025 ASHA - AI Real Estate Assistant. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ASHA Chat Icon -->
+    <div id="asha-chat-icon" class="fixed bottom-8 right-8 w-20 h-20 bg-gradient-to-br from-asha-blue to-asha-green rounded-full shadow-xl flex items-center justify-center cursor-pointer hover:scale-110 transition-transform z-50">
+        <i class="fas fa-home text-white text-2xl voice-pulse"></i>
+    </div>
+
+    <!-- ASHA Chat Window -->
+    <div id="asha-chat-window" class="fixed bottom-8 right-8 w-[500px] h-[700px] bg-white rounded-2xl shadow-2xl overflow-hidden hidden z-50 flex flex-col">
+        <!-- Chat Header -->
+        <div class="bg-gradient-to-r from-asha-blue to-asha-green p-6 text-white">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-home text-asha-blue text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg">ASHA</h3>
+                        <p class="text-sm opacity-90">Real Estate Assistant</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button id="minimize-chat" class="text-white hover:text-gray-200 transition-colors">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button id="close-chat" class="text-white hover:text-gray-200 transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto chat-container bg-gray-50">
+            <div class="flex mb-4">
+                <div class="w-10 h-10 bg-gradient-to-br from-asha-blue to-asha-green rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                    <i class="fas fa-home text-white"></i>
+                </div>
+                <div class="bg-white rounded-lg p-3 shadow-sm max-w-xs">
+                    <p class="text-sm">Hi! I'm ASHA, your AI real estate assistant. I can help you:</p>
+                    <ul class="text-xs mt-2 space-y-1">
+                        <li>🏠 Search for properties</li>
+                        <li>📅 Schedule visits</li>
+                        <li>💬 Answer your questions</li>
+                        <li>🎯 Get recommendations</li>
+                    </ul>
+                    <p class="text-sm mt-2">How can I help you today?</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="border-t p-4 bg-white">
+            <div class="flex items-center space-x-3">
+                <button id="voice-input-btn" class="text-asha-orange hover:text-orange-600 transition-colors">
+                    <i class="fas fa-microphone text-xl"></i>
+                </button>
+                
+                <div class="flex-1">
+                    <input id="chat-input" type="text" placeholder="Ask me about properties..." class="w-full px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-asha-blue focus:border-transparent">
+                </div>
+                
+                <button id="send-message-btn" class="bg-asha-blue text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Recording Modal -->
+    <div id="voice-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <div class="text-center">
+                <div class="w-24 h-24 bg-gradient-to-br from-asha-orange to-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-microphone text-white text-3xl voice-pulse"></i>
+                </div>
+                
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Voice Input</h3>
+                <p class="text-gray-600 mb-6">Ask me about properties, schedule visits, or any real estate questions!</p>
+                
+                <div id="voice-transcript" class="bg-gray-50 rounded-lg p-4 mb-6 min-h-[60px] text-left text-sm">
+                    <em class="text-gray-500">Start speaking...</em>
+                </div>
+                
+                <div class="flex justify-center space-x-4">
+                    <button id="stop-recording" class="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors">
+                        <i class="fas fa-stop mr-2"></i>Stop
+                    </button>
+                    <button id="cancel-recording" class="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Property Details Modal -->
+    <div id="property-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 hidden">
+        <div class="bg-white rounded-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div id="property-modal-content">
+                <!-- Property details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Booking Modal -->
+    <div id="appointment-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Schedule Visit</h3>
+                    <button id="close-appointment-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="appointment-form" class="space-y-4">
+                    <input type="hidden" id="appointment-property-id">
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Your Name</label>
+                        <input type="text" id="visitor-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Phone Number</label>
+                        <input type="tel" id="visitor-phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Email</label>
+                        <input type="email" id="visitor-email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Preferred Date</label>
+                        <input type="date" id="visit-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Preferred Time</label>
+                        <select id="visit-time" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue" required>
+                            <option value="">Select Time</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                            <option value="17:00">5:00 PM</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Additional Notes (Optional)</label>
+                        <textarea id="visit-notes" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-asha-blue" placeholder="Any specific requirements or questions..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-asha-blue text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-calendar-check mr-2"></i>Schedule Visit
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/asha-app.js"></script>
+</body>
+</html>
